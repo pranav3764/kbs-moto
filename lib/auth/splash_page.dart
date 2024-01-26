@@ -1,0 +1,67 @@
+import 'package:flutter/material.dart';
+
+
+class SplashPage extends StatelessWidget {
+  const SplashPage({super.key});
+  navigateTologin(BuildContext context) async {
+    Future.delayed(Duration(seconds: 3), () {
+      Navigator.pushReplacementNamed(context, '/login');
+    }
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    navigateTologin(context);
+    return Scaffold(
+      backgroundColor: Colors.grey.shade900,
+      body: Padding(
+        padding: EdgeInsets.all(16),
+        child: Center(
+          child: Image.asset("assets/kbs_motohub_red.png" ),
+          //child: SlideTransitionExample(),
+
+        ),
+      ),
+    );
+  }
+}
+
+// class SlideTransitionExample extends StatefulWidget {
+//   const SlideTransitionExample({super.key});
+//
+//   @override
+//   State<SlideTransitionExample> createState() => _SlideTransitionExampleState();
+// }
+//
+// class _SlideTransitionExampleState extends State<SlideTransitionExample>
+//     with SingleTickerProviderStateMixin {
+//   late final AnimationController _controller = AnimationController(
+//     duration: const Duration(seconds: 2),
+//     vsync: this,
+//   )..repeat(reverse: true);
+//   late final Animation<Offset> _offsetAnimation = Tween<Offset>(
+//     begin: Offset.zero,
+//     end: const Offset(1.5, 0.0),
+//   ).animate(CurvedAnimation(
+//     parent: _controller,
+//     curve: Curves.elasticIn,
+//   ));
+//
+//   @override
+//   void dispose() {
+//     _controller.dispose();
+//     super.dispose();
+//   }
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return SlideTransition(
+//       position: _offsetAnimation,
+//       child: const Padding(
+//         padding: EdgeInsets.all(8.0),
+//         child:  FlutterLogo(size: 150,)
+//       ),
+//     );
+//   }
+// }

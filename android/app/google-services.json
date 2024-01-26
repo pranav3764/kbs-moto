@@ -1,13 +1,32 @@
 {
   "project_info": {
-    "project_number": "26712437648",
-    "project_id": "flutter-mynotes-project-test",
-    "storage_bucket": "flutter-mynotes-project-test.appspot.com"
+    "project_number": "178835393894",
+    "project_id": "kbs-motohub",
+    "storage_bucket": "kbs-motohub.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:26712437648:android:5c77b5d81d281b85c77915",
+        "mobilesdk_app_id": "1:178835393894:android:3d01eb7a21a49934e0cca7",
+        "android_client_info": {
+          "package_name": "com.example.kbs_moto"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC9WXHgaYd5htdRP-bYAAf79f0qCYxmi_0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:178835393894:android:1a0cc14ab4b5cb8ae0cca7",
         "android_client_info": {
           "package_name": "com.example.mynotes"
         }
@@ -15,7 +34,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyAjfyuIFFBVcAWuqfC0udRlewwD3GR_nWA"
+          "current_key": "AIzaSyC9WXHgaYd5htdRP-bYAAf79f0qCYxmi_0"
         }
       ],
       "services": {

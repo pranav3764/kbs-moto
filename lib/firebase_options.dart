@@ -17,10 +17,7 @@ import 'package:flutter/foundation.dart'
 class DefaultFirebaseOptions {
   static FirebaseOptions get currentPlatform {
     if (kIsWeb) {
-      throw UnsupportedError(
-        'DefaultFirebaseOptions have not been configured for web - '
-        'you can reconfigure this by running the FlutterFire CLI again.',
-      );
+      return web;
     }
     switch (defaultTargetPlatform) {
       case TargetPlatform.android:
@@ -28,10 +25,7 @@ class DefaultFirebaseOptions {
       case TargetPlatform.iOS:
         return ios;
       case TargetPlatform.macOS:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for macos - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
+        return macos;
       case TargetPlatform.windows:
         throw UnsupportedError(
           'DefaultFirebaseOptions have not been configured for windows - '
@@ -49,20 +43,38 @@ class DefaultFirebaseOptions {
     }
   }
 
+  static const FirebaseOptions web = FirebaseOptions(
+    apiKey: 'AIzaSyDqv7Kz5lzcekqYLZXCAYEvgkgzaOwvRpc',
+    appId: '1:178835393894:web:e4500a04bb48b92ae0cca7',
+    messagingSenderId: '178835393894',
+    projectId: 'kbs-motohub',
+    authDomain: 'kbs-motohub.firebaseapp.com',
+    storageBucket: 'kbs-motohub.appspot.com',
+  );
+
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyAjfyuIFFBVcAWuqfC0udRlewwD3GR_nWA',
-    appId: '1:26712437648:android:5c77b5d81d281b85c77915',
-    messagingSenderId: '26712437648',
-    projectId: 'flutter-mynotes-project-test',
-    storageBucket: 'flutter-mynotes-project-test.appspot.com',
+    apiKey: 'AIzaSyC9WXHgaYd5htdRP-bYAAf79f0qCYxmi_0',
+    appId: '1:178835393894:android:1a0cc14ab4b5cb8ae0cca7',
+    messagingSenderId: '178835393894',
+    projectId: 'kbs-motohub',
+    storageBucket: 'kbs-motohub.appspot.com',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyD34PL0HHwNVWUO6Vn_hiy5BV_yqC71BC0',
-    appId: '1:26712437648:ios:074514de94b3570fc77915',
-    messagingSenderId: '26712437648',
-    projectId: 'flutter-mynotes-project-test',
-    storageBucket: 'flutter-mynotes-project-test.appspot.com',
+    apiKey: 'AIzaSyB0rcbLNmf-MOyWVis_f4H6riBQZNsPf9k',
+    appId: '1:178835393894:ios:e14bfd5c613f8932e0cca7',
+    messagingSenderId: '178835393894',
+    projectId: 'kbs-motohub',
+    storageBucket: 'kbs-motohub.appspot.com',
+    iosBundleId: 'com.example.mynotes',
+  );
+
+  static const FirebaseOptions macos = FirebaseOptions(
+    apiKey: 'AIzaSyB0rcbLNmf-MOyWVis_f4H6riBQZNsPf9k',
+    appId: '1:178835393894:ios:e14bfd5c613f8932e0cca7',
+    messagingSenderId: '178835393894',
+    projectId: 'kbs-motohub',
+    storageBucket: 'kbs-motohub.appspot.com',
     iosBundleId: 'com.example.mynotes',
   );
 }
