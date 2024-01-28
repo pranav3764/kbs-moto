@@ -22,6 +22,7 @@ class _HomeScreenState extends State<HomeScreen> {
             children: [
               Icon(
                 Icons.location_pin,
+                color: Colors.red.shade400,
                 size: 35,
               ),
               Column(
@@ -50,7 +51,7 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
         body: Center(
           child: Padding(
-            padding: EdgeInsets.all(10),
+            padding: EdgeInsets.all(17),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
