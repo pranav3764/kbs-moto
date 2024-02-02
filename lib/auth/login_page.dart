@@ -59,18 +59,11 @@ class _LoginPageState extends State<LoginPage> {
         Placemark firstPlacemark = placemarks[0];
         String street = firstPlacemark.street ?? "";
         String country = firstPlacemark.country ?? "";
+        String postalCode = firstPlacemark.postalCode ?? "";
 
-        setState(() {
-          stree = street;
-          countr = country;
-        });
         globals.country = country;
         globals.street = street;
-      } else {
-        setState(() {
-          stree = "No address available";
-          countr = "No address available";
-        });
+        globals.postalCode = postalCode;
       }
     }
 

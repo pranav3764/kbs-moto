@@ -50,8 +50,8 @@ class ButtonTile extends StatelessWidget {
     return GestureDetector(
       onTap: onPressed,
       child: Container(
-        width: 183.0,
-        height: 180.0, // Fix the height of the button tile
+        width: 172.0,
+        height: 149.0, // Fix the height of the button tile
         decoration: BoxDecoration(
           border: Border.all(color: Colors.grey),
           borderRadius: BorderRadius.circular(10.0),
@@ -61,7 +61,8 @@ class ButtonTile extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             SizedBox(
-              height: 100.0, // Adjust the height as needed
+              height: 100.0,
+              // Adjust the height as needed
               child: Image.asset(
                 imageUrl,
                 width: double

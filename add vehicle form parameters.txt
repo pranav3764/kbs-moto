@@ -1,0 +1,6 @@
+Add vehicles
+1. brand
+2. year
+3. fuel type(drop down)
+4. transmission(dropdown)
+5. km driven //optional

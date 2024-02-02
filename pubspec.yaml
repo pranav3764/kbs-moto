@@ -46,7 +46,8 @@ dependencies:
   curved_navigation_bar: ^1.0.3
   geocoding: ^2.1.1
   firebase_database: ^10.4.0
-  get: ^4.6.5
+  carousel_slider: ^4.2.1
+  url_launcher: ^6.1.11
 
 dev_dependencies:
   flutter_test:

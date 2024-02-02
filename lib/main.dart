@@ -1,9 +1,10 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:mynotes/NavBar/nav_page.dart';
+import 'package:mynotes/Screens/Home/main_home_screen.dart';
+import 'package:mynotes/Screens/Home/temp.dart';
 
 import 'package:mynotes/auth/splash_page.dart';
-import 'package:mynotes/pages/home.dart';
 import 'package:mynotes/user_location/getNearestStation.dart';
 import 'auth/login_page.dart';
 import 'firebase_options.dart';
@@ -40,9 +41,10 @@ class MyApp extends StatelessWidget {
           "/": (context) => SplashPage(),
           "/login": (context) => LoginPage(),
           "/register": (context) => RegisterationPage(),
-          "/home": (context) => HomePage(),
+          "/home": (context) => HomeScreen(),
           "/location": (context) => locationServices(),
-          "/nav": (context) => NavPage()
+          "/nav": (context) => NavPage(),
+          "/temp": (context) => GetLatLongScreen(),
         });
   }
 }

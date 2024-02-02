@@ -6,6 +6,8 @@ import 'package:mynotes/Screens/Home/main_home_screen.dart';
 import 'package:mynotes/Screens/Settings/settings.dart';
 import 'package:mynotes/Screens/profile/profile_page.dart';
 
+
+
 class NavPage extends StatefulWidget {
   const NavPage({Key? key}) : super(key: key);
 
@@ -15,12 +17,13 @@ class NavPage extends StatefulWidget {
 
 class _NavPageState extends State<NavPage> {
   int _currentIndex = 0;
-  final List<Widget> _screens =[
+  final List<Widget> _screens = [
     HomeScreen(),
     AddVehicles(),
     SettingsPage(),
     ProfilePage(),
   ];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -29,31 +32,34 @@ class _NavPageState extends State<NavPage> {
         children: _screens,
       ),
       backgroundColor: Colors.grey.shade900,
-      bottomNavigationBar: CurvedNavigationBar(
+      bottomNavigationBar: BottomNavigationBar(
         backgroundColor: Colors.grey.shade900,
-        color: Color(0xFFD20606),
-        animationDuration: Duration(milliseconds: 300),
+        selectedItemColor: Color(0xFFD20606),
+        unselectedItemColor: Colors.grey.shade900,
+        currentIndex: _currentIndex,
+        onTap: (index) {
+          setState(() {
+            _currentIndex = index;
+          });
+        },
         items: [
-          Icon(
-            Icons.home,
-            color: Colors.white,
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home),
+            label: 'Home',
           ),
-          Icon(
-            Icons.add,
-            color: Colors.white,
+          BottomNavigationBarItem(
+            icon: Icon(Icons.add),
+            label: 'Add',
           ),
-          Icon(
-            Icons.settings,
-            color: Colors.white,
+          BottomNavigationBarItem(
+            icon: Icon(Icons.settings),
+            label: 'Settings',
           ),
-          Icon(
-            Icons.person,
-            color: Colors.white,
+          BottomNavigationBarItem(
+            icon: Icon(Icons.person),
+            label: 'Profile',
           ),
         ],
-        onTap: (index) {
-          print(index);
-        },
       ),
     );
   }
