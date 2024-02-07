@@ -6,11 +6,13 @@ import 'package:mynotes/Screens/Home/main_home_screen.dart';
 import 'package:mynotes/Screens/Settings/settings.dart';
 import 'package:mynotes/Screens/profile/profile_page.dart';
 
+import '../Screens/ServiceStations/list_of_servicestations.dart';
+
 
 
 class NavPage extends StatefulWidget {
   const NavPage({Key? key}) : super(key: key);
-
+ 
   @override
   State<NavPage> createState() => _NavPageState();
 }
@@ -20,8 +22,10 @@ class _NavPageState extends State<NavPage> {
   final List<Widget> _screens = [
     HomeScreen(),
     AddVehicles(),
-    SettingsPage(),
+    ListOfServiceStations(),
+    // SettingsPage(),
     ProfilePage(),
+    
   ];
 
   @override

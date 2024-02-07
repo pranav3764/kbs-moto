@@ -3,6 +3,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:mynotes/Screens/ServiceStations/list_of_servicestations.dart';
+import 'package:mynotes/Screens/bookAppointment/bookAppointment.dart';
 import 'package:mynotes/functions/buttons.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mynotes/globals.dart' as globals;
@@ -178,17 +180,20 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),*/
                 Row(children: [
                   ButtonTile(
-                    imageUrl: 'assets/button_images/inspection.png',
+                    imageUrl: 'assets/appointment.png',
                     title: 'Book Appointment',
+                    tag: 'a',
                     onPressed: () {
                       // Add your button's on pressed logic here
-                      print('Button pressed!');
+                      Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) => BookAppointment(tag: 'a')));
                     },
                   ),
                   SizedBox(width: 16),
                   ButtonTile(
-                    imageUrl: 'assets/button_images/cleaning.png',
+                    imageUrl: 'assets/motorcycle.png',
                     title: 'Vehicles',
+                    tag: 'b',
                     onPressed: () {
                       // Add your button's on pressed logic here
                       print('Button pressed!');
@@ -200,17 +205,19 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 Row(children: [
                   ButtonTile(
-                    imageUrl: 'assets/button_images/inspection.png',
+                    imageUrl: 'assets/garage.png',
                     title: 'Service Stations',
+                    tag: 'c',
                     onPressed: () {
-                      // Add your button's on pressed logic here
-                      print('Button pressed!');
+                      Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) => ListOfServiceStations()));
                     },
                   ),
                   SizedBox(width: 16),
                   ButtonTile(
-                    imageUrl: 'assets/button_images/cleaning.png',
+                    imageUrl: 'assets/file.png',
                     title: 'History Services',
+                    tag: 'd',
                     onPressed: () {
                       // Add your button's on pressed logic here
                       print('Button pressed!');

@@ -30,31 +30,62 @@ Widget customInkWell({
       text,
       textAlign: TextAlign.center,
       style: TextStyle(
-        color: Color(0xFFD20606),
+        color: Color.fromARGB(255, 232, 138, 138),
       ),
     ),
     onTap: onTap,
   );
 }
 
-class ButtonTile extends StatelessWidget {
+class ButtonTile extends StatefulWidget {
   final String imageUrl;
   final String title;
   final VoidCallback onPressed;
+  final String tag;
 
-  ButtonTile(
-      {required this.imageUrl, required this.title, required this.onPressed});
+  const ButtonTile(
+      {super.key,
+      required this.tag,
+      required this.imageUrl,
+      required this.title,
+      required this.onPressed});
 
+  @override
+  State<ButtonTile> createState() => _ButtonTileState();
+}
+
+class _ButtonTileState extends State<ButtonTile> {
+  bool isHover = false;
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: onPressed,
-      child: Container(
-        width: 172.0,
-        height: 149.0, // Fix the height of the button tile
+      onTapDown: (_) {
+        setState(() {
+          isHover = true;
+        });
+      },
+      onTapUp: (_) {
+        setState(() {
+          isHover = false;
+        });
+        widget.onPressed();
+      },
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        width: 172,
+        height: 149, // Fix the height of the button tile
         decoration: BoxDecoration(
-          border: Border.all(color: Colors.grey),
-          borderRadius: BorderRadius.circular(10.0),
+          border: Border.all(color: Colors.transparent),
+          borderRadius: BorderRadius.circular(20.0),
+          color: isHover
+              ? Color.fromARGB(255, 198, 31, 19)
+              : Color.fromARGB(255, 250, 250, 250),
+          boxShadow: [
+            BoxShadow(
+                blurRadius: 8,
+                spreadRadius: 3,
+                color: Color.fromARGB(255, 189, 186, 185))
+          ],
         ),
         padding: EdgeInsets.all(8.0),
         child: Column(
@@ -64,18 +95,25 @@ class ButtonTile extends StatelessWidget {
               height: 100.0,
               // Adjust the height as needed
               child: Image.asset(
-                imageUrl,
-                width: double
-                    .infinity, // Image takes up the entire width of the container
-                fit: BoxFit.cover,
+                widget.imageUrl,
+                height: 70,
+                width: 70,
+                color:
+                    isHover ? Color.fromARGB(255, 255, 255, 255) : Colors.black,
               ),
             ),
             SizedBox(height: 8.0),
-            Text(
-              title,
-              style: TextStyle(
-                fontSize: 16.0,
-                fontWeight: FontWeight.bold,
+            Hero(
+              tag: widget.tag,
+              child: Text(
+                widget.title,
+                style: TextStyle(
+                  color: isHover
+                      ? Color.fromARGB(255, 255, 255, 255)
+                      : Color.fromARGB(255, 50, 48, 48),
+                  fontSize: 16.0,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
           ],

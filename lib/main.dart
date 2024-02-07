@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:mynotes/NavBar/nav_page.dart';
 import 'package:mynotes/Screens/Home/main_home_screen.dart';
 import 'package:mynotes/Screens/Home/temp.dart';
+import 'package:mynotes/Screens/ServiceStations/list_of_servicestations.dart';
+import 'package:mynotes/Screens/bookAppointment/bookAppointment.dart';
 
 import 'package:mynotes/auth/splash_page.dart';
 import 'package:mynotes/user_location/getNearestStation.dart';
@@ -45,6 +47,7 @@ class MyApp extends StatelessWidget {
           "/location": (context) => locationServices(),
           "/nav": (context) => NavPage(),
           "/temp": (context) => GetLatLongScreen(),
+          "/serviceCenterList": (context) => ListOfServiceStations(),
         });
   }
 }
