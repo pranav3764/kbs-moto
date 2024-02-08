@@ -6,6 +6,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:mynotes/functions/buttons.dart';
 import 'package:mynotes/auth/location_function.dart';
 import 'package:mynotes/globals.dart' as globals;
+import 'package:email_validator/email_validator.dart';
 
 class RegisterationPage extends StatefulWidget {
   const RegisterationPage({Key? key}) : super(key: key);
@@ -194,6 +195,12 @@ class _RegisterationPageState extends State<RegisterationPage> {
                               controller: nameController,
                               keyboardType: TextInputType.text,
                               cursorColor: Color(0xFFD20606),
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Enter Your Name';
+                                }
+                                return null;
+                              },
                               style: TextStyle(
                                 color: Colors.white,
                               ),
@@ -250,6 +257,12 @@ class _RegisterationPageState extends State<RegisterationPage> {
                               controller: phoneController,
                               keyboardType: TextInputType.text,
                               cursorColor: Color(0xFFD20606),
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Enter Phone Number';
+                                }
+                                return null;
+                              },
                               style: TextStyle(
                                 color: Colors.white,
                               ),
@@ -306,6 +319,12 @@ class _RegisterationPageState extends State<RegisterationPage> {
                               controller: emailController,
                               keyboardType: TextInputType.text,
                               cursorColor: Color(0xFFD20606),
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Enter Email';
+                                }
+                                return null;
+                              },
                               style: TextStyle(
                                 color: Colors.white,
                               ),
@@ -362,6 +381,12 @@ class _RegisterationPageState extends State<RegisterationPage> {
                               controller: passwordController,
                               keyboardType: TextInputType.text,
                               cursorColor: Color(0xFFD20606),
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Enter password';
+                                }
+                                return null;
+                              },
                               obscureText: true,
                               style: TextStyle(
                                 color: Colors.white,
@@ -419,6 +444,12 @@ class _RegisterationPageState extends State<RegisterationPage> {
                               controller: confirmPasswordController,
                               keyboardType: TextInputType.text,
                               cursorColor: Color(0xFFD20606),
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Enter Confirm Password';
+                                }
+                                return null;
+                              },
                               obscureText: true,
                               style: TextStyle(
                                 color: Colors.white,
@@ -468,8 +499,7 @@ class _RegisterationPageState extends State<RegisterationPage> {
                                       phoneController.text.isEmpty) {
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       SnackBar(
-                                        content:
-                                            Text("No Field could be empty"),
+                                        content: Text("Fill all Fields"),
                                         backgroundColor: Colors.red,
                                       ),
                                     );
@@ -477,7 +507,16 @@ class _RegisterationPageState extends State<RegisterationPage> {
                                       passwordController.text) {
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       SnackBar(
-                                        content: Text("Password incorrect!"),
+                                        content:
+                                            Text("Password not Matching!!"),
+                                        backgroundColor: Colors.red,
+                                      ),
+                                    );
+                                  } else if (!EmailValidator.validate(
+                                      emailController.text)) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: Text("Invalid Email!!"),
                                         backgroundColor: Colors.red,
                                       ),
                                     );

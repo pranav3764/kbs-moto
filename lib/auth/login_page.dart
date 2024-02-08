@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:geocoding/geocoding.dart';
@@ -114,6 +115,15 @@ class _LoginPageState extends State<LoginPage> {
 
       //);
     } on FirebaseAuthException catch (e) {
+      setState(() {
+        showLoader = false;
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text("Wrong Email or Password"),
+          backgroundColor: Colors.red,
+        ),
+      );
       print("OHOOOO Something went wrong" + e.message.toString());
     }
   }
@@ -313,6 +323,14 @@ class _LoginPageState extends State<LoginPage> {
                                   SnackBar(
                                     content: Text(
                                         "Email and password cannot be empty"),
+                                    backgroundColor: Colors.red,
+                                  ),
+                                );
+                              } else if (!EmailValidator.validate(
+                                  emailController.text)) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text("Invalid Email!!"),
                                     backgroundColor: Colors.red,
                                   ),
                                 );

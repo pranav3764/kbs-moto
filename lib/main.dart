@@ -4,14 +4,10 @@ import 'package:mynotes/NavBar/nav_page.dart';
 import 'package:mynotes/Screens/Home/main_home_screen.dart';
 import 'package:mynotes/Screens/Home/temp.dart';
 import 'package:mynotes/Screens/ServiceStations/list_of_servicestations.dart';
-import 'package:mynotes/Screens/bookAppointment/bookAppointment.dart';
-
 import 'package:mynotes/auth/splash_page.dart';
 import 'package:mynotes/user_location/getNearestStation.dart';
 import 'auth/login_page.dart';
 import 'firebase_options.dart';
-//import 'package:kbs_moto/user_location/location_services.dart';
-
 import 'auth/registeration_page.dart';
 
 Future<void> main() async {
