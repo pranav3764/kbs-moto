@@ -111,6 +111,7 @@ class _RegisterationPageState extends State<RegisterationPage> {
             .collection("customer")
             .doc(userCredential.user!.uid)
             .set({
+          "customerId": userCredential.user!.uid,
           "name": nameController.text.trim(),
           "phone": phoneController.text.trim(),
           "email": emailController.text.trim(),

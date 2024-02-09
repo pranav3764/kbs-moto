@@ -1,5 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:mynotes/NavBar/nav_page.dart';
 import 'package:mynotes/Screens/Home/main_home_screen.dart';
 import 'package:mynotes/Screens/Home/temp.dart';
@@ -11,6 +12,9 @@ import 'firebase_options.dart';
 import 'auth/registeration_page.dart';
 
 Future<void> main() async {
+  SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+    statusBarColor: Colors.transparent,
+  ));
   runApp(const MyApp());
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
