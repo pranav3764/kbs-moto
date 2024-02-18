@@ -239,13 +239,14 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:mynotes/Screens/Addvehicles/add_vehicles.dart';
+import 'package:mynotes/Screens/Home/myAppointments.dart';
 import 'package:mynotes/Screens/ServiceStations/list_of_servicestations.dart';
 import 'package:mynotes/Screens/bookAppointment/bookAppointment.dart';
 import 'package:mynotes/functions/buttons.dart';
 // import 'package:google_fonts/google_fonts.dart';
 import 'package:mynotes/globals.dart' as globals;
 import 'package:url_launcher/url_launcher.dart';
-import 'package:flutter/services.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -255,8 +256,10 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  double heightofbannerbox = 200.0;
+  double heightofbannerbox = 250.0;
+  String customerId = globals.customerId;
   Stream<QuerySnapshot<Map<String, dynamic>>> fetchBanners() {
+    print(customerId);
     return FirebaseFirestore.instance.collection("Banners").snapshots();
   }
 
@@ -265,11 +268,14 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
         body: Center(
       child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 23),
+        padding: EdgeInsets.symmetric(horizontal: 8),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
+            SizedBox(
+              height: 10,
+            ),
             Row(
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.center,
@@ -280,7 +286,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     padding: const EdgeInsets.only(bottom: 15.0, right: 10),
                     child: Icon(
                       Icons.location_pin,
-                      color: Colors.red,
+                      color: Color(0xFFee1c1d),
                       size: 35,
                     ),
                   ),
@@ -381,7 +387,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ],
             ),
             SizedBox(
-              height: 16,
+              height: 8,
             ),
 
             /*CarouselSlider(
@@ -413,7 +419,8 @@ class _HomeScreenState extends State<HomeScreen> {
                       );
                     }).toList() ?? [],
                   ),*/
-            Row(children: [
+
+            Row(mainAxisAlignment: MainAxisAlignment.center, children: [
               ButtonTile(
                 imageUrl: 'assets/appointment.png',
                 title: 'Book Appointment',
@@ -424,21 +431,28 @@ class _HomeScreenState extends State<HomeScreen> {
                       builder: (context) => ListOfServiceStations()));
                 },
               ),
-              SizedBox(width: 16),
+              SizedBox(
+                width: 2,
+              ),
+              SizedBox(
+                width: 2,
+              ),
               ButtonTile(
                 imageUrl: 'assets/motorcycle.png',
                 title: 'Vehicles',
                 tag: 'b',
                 onPressed: () {
                   // Add your button's on pressed logic here
-                  print('Button pressed!');
+                  Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) => AddVehicleScreen()));
                 },
               ),
-            ]),
-            SizedBox(
-              height: 16,
-            ),
-            Row(children: [
+              SizedBox(
+                width: 2,
+              ),
+              SizedBox(
+                width: 2,
+              ),
               ButtonTile(
                 imageUrl: 'assets/garage.png',
                 title: 'Service Stations',
@@ -448,7 +462,12 @@ class _HomeScreenState extends State<HomeScreen> {
                       builder: (context) => ListOfServiceStations()));
                 },
               ),
-              SizedBox(width: 16),
+              SizedBox(
+                width: 2,
+              ),
+              SizedBox(
+                width: 2,
+              ),
               ButtonTile(
                 imageUrl: 'assets/file.png',
                 title: 'History Services',
@@ -459,6 +478,15 @@ class _HomeScreenState extends State<HomeScreen> {
                 },
               ),
             ]),
+
+            // Appointments Section
+            Expanded(
+              child: Container(
+                child: MyAppointments(
+                  customerId: globals.customerId,
+                ),
+              ),
+            ),
           ],
         ),
       ),

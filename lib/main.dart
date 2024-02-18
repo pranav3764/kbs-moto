@@ -10,11 +10,17 @@ import 'package:mynotes/user_location/getNearestStation.dart';
 import 'auth/login_page.dart';
 import 'firebase_options.dart';
 import 'auth/registeration_page.dart';
+import 'features/authentication/screens/onboarding.dart';
+import 'package:mynotes/features/splash/screen/splash_screen.dart';
+import 'package:get/get.dart';
+import 'package:get/get_navigation/src/root/get_material_app.dart';
+import 'package:get/get_navigation/src/routes/get_route.dart';
+
+import 'package:mynotes/utils/theme/theme.dart';
 
 Future<void> main() async {
-  SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
-    statusBarColor: Colors.transparent,
-  ));
+  SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
+      overlays: [SystemUiOverlay.bottom]);
   runApp(const MyApp());
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
@@ -40,7 +46,7 @@ class MyApp extends StatelessWidget {
         ),
         initialRoute: '/',
         routes: {
-          "/": (context) => SplashPage(),
+          "/": (context) => SplashPagee(),
           "/login": (context) => LoginPage(),
           "/register": (context) => RegisterationPage(),
           "/home": (context) => HomeScreen(),
@@ -48,6 +54,7 @@ class MyApp extends StatelessWidget {
           "/nav": (context) => NavPage(),
           "/temp": (context) => GetLatLongScreen(),
           "/serviceCenterList": (context) => ListOfServiceStations(),
+          "/onBoarding": (context) => OnBoardingScreen(),
         });
   }
 }

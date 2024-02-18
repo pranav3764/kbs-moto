@@ -71,48 +71,53 @@ class _ButtonTileState extends State<ButtonTile> {
         widget.onPressed();
       },
       child: AnimatedContainer(
+        margin: EdgeInsets.only(bottom: 15),
+        alignment: Alignment.center,
         duration: const Duration(milliseconds: 200),
-        width: 172,
-        height: 149, // Fix the height of the button tile
+        width: 94,
+        height: 100, // Fix the height of the button tile
         decoration: BoxDecoration(
           border: Border.all(color: Colors.transparent),
-          borderRadius: BorderRadius.circular(20.0),
-          color: isHover
-              ? Color.fromARGB(255, 198, 31, 19)
-              : Color.fromARGB(255, 250, 250, 250),
+          borderRadius: BorderRadius.circular(10.0),
           boxShadow: [
             BoxShadow(
-                blurRadius: 8,
-                spreadRadius: 3,
-                color: Color.fromARGB(255, 189, 186, 185))
+              color: const Color.fromARGB(255, 103, 101, 101).withOpacity(0.2),
+              spreadRadius: 4,
+              blurRadius: 9,
+              offset: Offset(0, 2),
+            ),
           ],
+          color: isHover ? Color(0xFFee1c1d) : Colors.white,
         ),
-        padding: EdgeInsets.all(8.0),
+        padding: EdgeInsets.all(6.0),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             SizedBox(
-              height: 100.0,
+              height: 40.0,
               // Adjust the height as needed
               child: Image.asset(
                 widget.imageUrl,
-                height: 70,
-                width: 70,
+                height: 30,
+                width: 30,
                 color:
                     isHover ? Color.fromARGB(255, 255, 255, 255) : Colors.black,
               ),
             ),
-            SizedBox(height: 8.0),
+            SizedBox(
+              height: 2,
+            ),
             Hero(
               tag: widget.tag,
               child: Text(
                 widget.title,
+                textAlign: TextAlign.center,
                 style: TextStyle(
                   color: isHover
                       ? Color.fromARGB(255, 255, 255, 255)
-                      : Color.fromARGB(255, 50, 48, 48),
-                  fontSize: 16.0,
-                  fontWeight: FontWeight.bold,
+                      : Colors.black,
+                  fontSize: 12.0,
+                  fontWeight: FontWeight.w500,
                 ),
               ),
             ),

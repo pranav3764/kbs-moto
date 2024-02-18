@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-class SplashPagee extends StatelessWidget {
-  const SplashPagee({Key? key}) : super(key: key);
+class SplashPage extends StatelessWidget {
+  const SplashPage({Key? key}) : super(key: key);
 
   void navigateToLogin(BuildContext context) async {
     Future.delayed(

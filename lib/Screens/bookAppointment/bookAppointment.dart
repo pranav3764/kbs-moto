@@ -2,44 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'dart:math';
-
 import '../Home/main_home_screen.dart';
-// import 'package:flutter/material.dart';
-// import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
-// import 'package:mynotes/Screens/Home/main_home_screen.dart';
-
-// class BookAppointment extends StatefulWidget {
-//   final String tag;
-//   const BookAppointment({Key? key, required this.tag}) : super(key: key);
-
-//   @override
-//   State<BookAppointment> createState() => _BookAppointmentState();
-// }
-
-// class _BookAppointmentState extends State<BookAppointment> {
-//   final TextEditingController _nameController = TextEditingController();
-//   final TextEditingController _remarksController = TextEditingController();
-
-//   DateTime _selectedDate = DateTime.now();
-//   TimeOfDay _selectedTime = TimeOfDay.now();
-
-//   @override
-//   Widget build(BuildContext context) {
-//     booking() {
-//       print(_selectedDate);
-//     }
-
-//     Future<void> _selectDate(BuildContext context) async {
-//       print("hi");
-//       final DateTime? picked = await DatePicker.showDatePicker(context,
-//           showTitleActions: true,
-//           minTime: DateTime.now(),
-//           maxTime: DateTime(2100, 6, 7));
-//       if (picked != null && picked != _selectedDate)
-//         setState(() {
-//           _selectedDate = picked;
-//         });
-//     }
 
 Future<void> _dialogBuilder(BuildContext context) {
   return showDialog<void>(
@@ -80,117 +43,6 @@ Future<void> _dialogBuilder(BuildContext context) {
   );
 }
 
-//     return Scaffold(
-//       appBar: AppBar(
-//         title: Hero(tag: widget.tag, child: Text('Book Appointment')),
-//         leading: IconButton(
-//             icon:
-//                 Icon(Icons.arrow_back, color: Color.fromARGB(255, 185, 26, 26)),
-//             onPressed: () => _dialogBuilder(context)),
-//       ),
-//       body: Padding(
-//         padding: const EdgeInsets.all(16.0),
-//         child: Column(
-//           crossAxisAlignment: CrossAxisAlignment.start,
-//           children: [
-//             TextFormField(
-//               controller: _nameController,
-//               keyboardType: TextInputType.text,
-//               decoration: InputDecoration(
-//                 hintText: "Name",
-//                 prefixIcon: Icon(
-//                   Icons.person,
-//                   color: Colors.redAccent,
-//                 ),
-//               ),
-//             ),
-//             SizedBox(height: 20),
-//             Row(
-//               children: [
-//                 Expanded(
-//                   child: GestureDetector(
-//                     onTap: () => _selectDate(context),
-//                     child: TextFormField(
-//                       decoration: InputDecoration(
-//                         hintText: 'Date',
-//                         prefixIcon: Icon(
-//                           Icons.calendar_today,
-//                           color: Colors.redAccent,
-//                         ),
-//                       ),
-//                       controller: TextEditingController(
-//                           text:
-//                               '${_selectedDate.year}-${_selectedDate.month}-${_selectedDate.day}'),
-//                     ),
-//                   ),
-//                 ),
-//                 SizedBox(width: 10),
-//                 Expanded(
-//                   child: GestureDetector(
-//                     onTap: () => _selectTime(context),
-//                     child: TextFormField(
-//                       decoration: InputDecoration(
-//                         hintText: 'Time',
-//                         prefixIcon: Icon(
-//                           Icons.access_time,
-//                           color: Colors.redAccent,
-//                         ),
-//                       ),
-//                       controller: TextEditingController(
-//                           text:
-//                               '${_selectedTime.hour}:${_selectedTime.minute}'),
-//                     ),
-//                   ),
-//                 ),
-//               ],
-//             ),
-//             SizedBox(height: 20),
-//             TextFormField(
-//               controller: _remarksController,
-//               keyboardType: TextInputType.multiline,
-//               maxLines: null,
-//               decoration: InputDecoration(
-//                 hintText: "Remarks",
-//                 prefixIcon: Icon(
-//                   Icons.notes,
-//                   color: Colors.redAccent,
-//                 ),
-//               ),
-//             ),
-//             SizedBox(height: 20),
-//             ElevatedButton(
-//               onPressed: () {
-//                 booking();
-//               },
-//               style: ElevatedButton.styleFrom(
-//                 shape: StadiumBorder(),
-//                 padding: EdgeInsets.symmetric(vertical: 15, horizontal: 25),
-//                 backgroundColor: Color.fromARGB(255, 151, 22, 22),
-//                 textStyle: TextStyle(fontSize: 15, fontWeight: FontWeight.w500),
-//               ),
-//               child: Text(
-//                 "Book",
-//                 style: TextStyle(color: Colors.white),
-//               ),
-//             ),
-//           ],
-//         ),
-//       ),
-//     );
-//   }
-
-//   Future<void> _selectTime(BuildContext context) async {
-//     final TimeOfDay? picked = await showTimePicker(
-//       context: context,
-//       initialTime: _selectedTime,
-//     );
-//     if (picked != null && picked != _selectedTime)
-//       setState(() {
-//         _selectedTime = picked;
-//       });
-//   }
-// }
-
 class BookAppointment extends StatefulWidget {
   final String userName;
   final String selectedServiceCenterName;
@@ -213,9 +65,11 @@ class _BookAppointmentState extends State<BookAppointment> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _remarksController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
+  List<Map<String, dynamic>> vehicles = [];
 
   DateTime _selectedDate = DateTime.now();
   TimeOfDay _selectedTime = TimeOfDay.now();
+  Map<String, dynamic>? selectedVehicle;
 
   double _totalCost = 0.0;
 
@@ -223,7 +77,30 @@ class _BookAppointmentState extends State<BookAppointment> {
   void initState() {
     super.initState();
     _fetchCurrentUser();
+    _fetchUserVehicles();
     // _generateRandomPrices();
+  }
+
+  void _fetchUserVehicles() async {
+    try {
+      User? user = FirebaseAuth.instance.currentUser;
+      if (user != null) {
+        String uid = user.uid;
+        QuerySnapshot<Map<String, dynamic>> snapshot = await FirebaseFirestore
+            .instance
+            .collection('customer')
+            .doc(uid)
+            .collection('vehicles')
+            .get();
+
+        setState(() {
+          // Update the vehicles list with the fetched data
+          vehicles = snapshot.docs.map((doc) => doc.data()).toList();
+        });
+      }
+    } catch (e) {
+      print('Error fetching user vehicles: $e');
+    }
   }
 
   void _fetchCurrentUser() async {
@@ -338,6 +215,7 @@ class _BookAppointmentState extends State<BookAppointment> {
         String name = _nameController.text;
         String phone = _phoneController.text;
         String remarks = _remarksController.text;
+
         Timestamp timestamp = Timestamp.fromDate(selectedDateTime);
 
         // Create a new appointment document ID
@@ -368,13 +246,34 @@ class _BookAppointmentState extends State<BookAppointment> {
           // Add more customer information if needed
         };
 
+        QuerySnapshot<Map<String, dynamic>> vehicleSnapshot =
+            await FirebaseFirestore.instance
+                .collection('customer')
+                .doc(FirebaseAuth.instance.currentUser!.uid)
+                .collection('vehicles')
+                .get();
+
+        Map<String, dynamic> vehicleInfo = {
+          'brand': vehicleSnapshot.docs.first.get('brand'),
+          'fuelType': vehicleSnapshot.docs.first.get('fuelType'),
+          'kmDriven': vehicleSnapshot.docs.first.get('kmDriven'),
+          'model': vehicleSnapshot.docs.first.get('model'),
+          'transmissionType':
+              vehicleSnapshot.docs.first.get('transmissionType'),
+          'variant': vehicleSnapshot.docs.first.get('variant'),
+          'vehicleId': vehicleSnapshot.docs.first.get('vehicleId'),
+          'year': vehicleSnapshot.docs.first.get('year'),
+          // Add more customer information if needed
+        };
+
         // Create data to be stored in Firestore
         Map<String, dynamic> appointmentData = {
           'name': name,
           'phone': phone,
           'remarks': remarks,
           'timestamp': timestamp,
-          'customerInfo': customerInfo, // Add customer information map
+          'customerInfo': customerInfo,
+          'vehicleInfo': vehicleInfo, // Add customer information map
         };
 
         // Store the appointment data in Firestore
@@ -396,11 +295,11 @@ class _BookAppointmentState extends State<BookAppointment> {
                 title: const Text("Booking Confirmed"),
               );
             });
+        Future.delayed(Duration(seconds: 4), () {
+          Navigator.pushReplacementNamed(context, '/nav');
+        });
       }
-      Future.delayed(Duration(seconds: 1), () {
-        Navigator.of(context)
-            .pushNamedAndRemoveUntil('/nav', (Route<dynamic> route) => false);
-      });
+      // Remove the navigation logic from here
     } catch (e) {
       // Show an error message to the user if the booking process fails
       ScaffoldMessenger.of(context).showSnackBar(
@@ -411,71 +310,22 @@ class _BookAppointmentState extends State<BookAppointment> {
     }
   }
 
-  // void _bookAppointment() async {
-  //   // Perform booking process here
-  //   // You can access the selected date, time, name, and remarks
-  //   String name = _nameController.text;
-  //   String phone = _phoneController.text;
-  //   String remarks = _remarksController.text;
-  //   Timestamp timestamp = Timestamp.now();
-
-  //   // Create a new appointment document ID
-  //   String appointmentId = FirebaseFirestore.instance
-  //       .collection('admins')
-  //       .doc(widget.adminId) // Use widget.adminId
-  //       .collection('branch')
-  //       .doc(widget.branchId) // Use widget.branchId
-  //       .collection('appointments')
-  //       .doc()
-  //       .id;
-
-  //   try {
-  //     // Fetch customer data using the customer ID
-  //     DocumentSnapshot<Map<String, dynamic>> customerSnapshot =
-  //         await FirebaseFirestore.instance
-  //             .collection('customer')
-  //             .doc(FirebaseAuth
-  //                 .instance.currentUser!.uid) // Fetch data for the current user
-  //             .get();
-
-  //     // Create a map for customer information
-  //     Map<String, dynamic> customerInfo = {
-  //       // 'customerName': customerSnapshot.get('name'),
-  //       // 'customerPhone': customerSnapshot.get('phone'),
-  //       'name': customerSnapshot.get('name'),
-  //       'phone': customerSnapshot.get('phone'),
-  //       'email': customerSnapshot.get('email'),
-  //       'customerId': customerSnapshot.get('customerId'),
-  //       'created_on': customerSnapshot.get('created_on'),
-  //       // Add more customer information if needed
-  //     };
-
-  //     // Create data to be stored in Firestore
-  //     Map<String, dynamic> appointmentData = {
-  //       'name': name,
-  //       'phone': phone,
-  //       'remarks': remarks,
-  //       'timestamp': timestamp,
-  //       'customerInfo': customerInfo, // Add customer information map
-  //     };
-
-  //     // Store the appointment data in Firestore
-  //     await FirebaseFirestore.instance
-  //         .collection('admins')
-  //         .doc(widget.adminId)
-  //         .collection('branch')
-  //         .doc(widget.branchId)
-  //         .collection('appointments')
-  //         .doc(appointmentId)
-  //         .set(appointmentData);
-
-  //     // Print a success message
-  //     print('Appointment booked successfully!');
-  //   } catch (e) {
-  //     // Print an error message if the booking process fails
-  //     print('Error booking appointment: $e');
-  //   }
-  // }
+// Build dropdown menu items from fetched vehicles
+  List<DropdownMenuItem<Map<String, dynamic>>> _buildDropdownMenuItems() {
+    List<DropdownMenuItem<Map<String, dynamic>>> items = [];
+    for (var vehicle in vehicles) {
+      String brand = vehicle['brand'];
+      String model = vehicle['model'];
+      String displayText = '$brand $model';
+      items.add(
+        DropdownMenuItem(
+          value: vehicle,
+          child: Text(displayText),
+        ),
+      );
+    }
+    return items;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -533,6 +383,31 @@ class _BookAppointmentState extends State<BookAppointment> {
                   ],
                 ),
               ],
+            ),
+            SizedBox(
+              height: 40,
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20.0),
+              child: DropdownButtonFormField(
+                value: selectedVehicle,
+                items: _buildDropdownMenuItems(),
+                onChanged: (value) {
+                  setState(() {
+                    selectedVehicle = value as Map<String, dynamic>;
+                  });
+                },
+                decoration: InputDecoration(
+                  hintText: "Select Vehicle",
+                  prefixIcon: Icon(
+                    Icons.directions_car,
+                    color: Colors.redAccent,
+                  ),
+                  enabledBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(color: Colors.redAccent),
+                  ),
+                ),
+              ),
             ),
 
             SizedBox(height: 30),
@@ -631,14 +506,15 @@ class _BookAppointmentState extends State<BookAppointment> {
                 controller: _remarksController,
                 keyboardType: TextInputType.text,
                 decoration: InputDecoration(
-                    hintText: "Remarks",
-                    prefixIcon: Icon(
-                      Icons.note,
-                      color: Colors.redAccent,
-                    ),
-                    enabledBorder: UnderlineInputBorder(
-                      borderSide: BorderSide(color: Colors.redAccent),
-                    )),
+                  hintText: "Remarks",
+                  prefixIcon: Icon(
+                    Icons.note,
+                    color: Colors.redAccent,
+                  ),
+                  enabledBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(color: Colors.redAccent),
+                  ),
+                ),
               ),
             ),
             SizedBox(height: 30),
@@ -665,7 +541,7 @@ class _BookAppointmentState extends State<BookAppointment> {
                             'Book',
                             style: TextStyle(fontSize: 17),
                           )))),
-            )
+            ),
           ],
         ),
       ),

@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/services.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:mynotes/Screens/location.dart';
@@ -24,6 +25,8 @@ class _LoginPageState extends State<LoginPage> {
   String countr = "";
   @override
   initState() {
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
+        overlays: [SystemUiOverlay.bottom]);
     Future<Position> _determinePosition() async {
       bool serviceEnabled;
       LocationPermission permission;
@@ -96,6 +99,7 @@ class _LoginPageState extends State<LoginPage> {
         email: emailController.text.trim(),
         password: passwordController.text.trim(),
       );
+
       print(
           "User Signed in Successfully" + userCredential.user!.uid.toString());
       // FirebaseFirestore.instance.collection("user").doc(userCredential.user!.uid).set(
@@ -103,7 +107,7 @@ class _LoginPageState extends State<LoginPage> {
       User? currentUser = FirebaseAuth.instance.currentUser;
 
       String uid = currentUser?.uid ?? "";
-
+      globals.customerId = userCredential.user!.uid;
       FirebaseFirestore.instance
           .collection("user_locations")
           .doc(userCredential.user!.uid)

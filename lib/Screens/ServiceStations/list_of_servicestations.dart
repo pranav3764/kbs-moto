@@ -202,6 +202,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:geolocator/geolocator.dart';
 import 'dart:math' show cos, sqrt, asin;
 import '../bookAppointment/bookAppointment.dart';
+import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
 class ListOfServiceStations extends StatefulWidget {
   const ListOfServiceStations({Key? key}) : super(key: key);
@@ -298,12 +299,14 @@ class _ListOfServiceStationsState extends State<ListOfServiceStations> {
                 // Sort the list based on distance
                 ..sort((a, b) => (a['distance'] as double)
                     .compareTo(b['distance'] as double));
-              Color selectedColour(int position) {
-                Color c = Color.fromARGB(255, 229, 82, 82);
-                if (position % 3 == 0) c = Color.fromARGB(255, 26, 149, 149);
-                if (position % 3 == 1) c = Color.fromARGB(255, 157, 112, 29);
-                if (position % 3 == 2) c = Color.fromARGB(255, 138, 32, 142);
-                return c;
+              IconData? selectedColour(String name) {
+                if (name == "Kbs Chandigarh Branch") {
+                  return MdiIcons.alphaCCircleOutline;
+                } else if (name == " Kbs Mumbai Branch") {
+                  return MdiIcons.alphaMCircleOutline;
+                } else if (name == "Kbs Delhi Branch") {
+                  return MdiIcons.alphaDCircleOutline;
+                }
               }
 
               return ListView.builder(
@@ -313,123 +316,136 @@ class _ListOfServiceStationsState extends State<ListOfServiceStations> {
                       sortedStations[index]['data'] as Map<String, dynamic>;
                   final distance = sortedStations[index]['distance'] as double;
 
-                  return Stack(children: <Widget>[
-                    InkWell(
-                      onTap: () => Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => BookAppointment(
-                          userName:
-                              data['name'], // Pass the service center name
-                          selectedServiceCenterName:
-                              _nameController.text, // Pass the user's name
-                          adminId:
-                              'g64p7nddtoxBZDKEQq1V', // Provide the adminId here
-                          branchId: data[
-                              'branchId'], // Pass the branchId from Firestore
-                        ),
-                      )),
-                      child: Container(
-                        height: 130,
-                        margin: EdgeInsets.only(bottom: 15),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                          color: selectedColour(index),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.grey.withOpacity(0.2),
-                              spreadRadius: 5,
-                              blurRadius: 7,
-                              offset: Offset(0, 2),
-                            ),
-                          ],
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 5, vertical: 5),
-                          child: Row(
-                            children: [
-                              SizedBox(width: 10),
-                              // title and subtitle
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Text(
-                                    data['name'],
-                                    style: TextStyle(
-                                        fontSize: 24,
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.white),
+                  return distance == 0
+                      ? Center(
+                          child: CircularProgressIndicator(),
+                        )
+                      : Stack(children: <Widget>[
+                          InkWell(
+                            onTap: () =>
+                                Navigator.of(context).push(MaterialPageRoute(
+                              builder: (context) => BookAppointment(
+                                userName: data[
+                                    'name'], // Pass the service center name
+                                selectedServiceCenterName: _nameController
+                                    .text, // Pass the user's name
+                                adminId:
+                                    'g64p7nddtoxBZDKEQq1V', // Provide the adminId here
+                                branchId: data[
+                                    'branchId'], // Pass the branchId from Firestore
+                              ),
+                            )),
+                            child: Container(
+                              height: 130,
+                              margin: EdgeInsets.only(bottom: 15),
+                              decoration: BoxDecoration(
+                                color: Color.fromARGB(255, 255, 255, 255),
+                                borderRadius: BorderRadius.circular(10),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color:
+                                        const Color.fromARGB(255, 103, 101, 101)
+                                            .withOpacity(0.2),
+                                    spreadRadius: 4,
+                                    blurRadius: 9,
+                                    offset: Offset(0, 2),
                                   ),
-                                  SizedBox(height: 10),
-                                  Row(
-                                    children: [
-                                      Icon(
-                                        Icons.location_on,
-                                        color: Colors.white,
-                                      ),
-                                      SizedBox(width: 5),
-                                      Text(
-                                        '${distance.toStringAsFixed(2)} km',
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 15,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  SizedBox(height: 7),
-                                  // ElevatedButton(
-                                  //   onPressed: () {
-                                  //     Navigator.of(context)
-                                  //         .push(MaterialPageRoute(
-                                  //       builder: (context) => BookAppointment(
-                                  //         userName: data[
-                                  //             'name'], // Pass the service center name
-                                  //         selectedServiceCenterName:
-                                  //             _nameController
-                                  //                 .text, // Pass the user's name
-                                  //         adminId:
-                                  //             'g64p7nddtoxBZDKEQq1V', // Provide the adminId here
-                                  //         branchId: data[
-                                  //             'branchId'], // Pass the branchId from Firestore
-                                  //       ),
-                                  //     ));
-                                  //   },
-                                  //   style: ElevatedButton.styleFrom(
-                                  //     primary: Color(0xFF7D0A0A),
-                                  //     shape: RoundedRectangleBorder(
-                                  //       borderRadius: BorderRadius.circular(20),
-                                  //     ),
-                                  //   ),
-                                  //   child: Padding(
-                                  //     padding: const EdgeInsets.symmetric(
-                                  //       horizontal: 8,
-                                  //       vertical: 2,
-                                  //     ),
-                                  //     child: Text(
-                                  //       'Book Appointment',
-                                  //       style: TextStyle(
-                                  //         color: Colors.white,
-                                  //         fontSize: 12,
-                                  //         fontWeight: FontWeight.bold,
-                                  //       ),
-                                  //     ),
-                                  //   ),
-                                  // ),
                                 ],
                               ),
-                            ],
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 5, vertical: 5),
+                                child: Row(
+                                  children: [
+                                    SizedBox(width: 10),
+                                    // title and subtitle
+                                    Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Text(
+                                          data['name'],
+                                          style: TextStyle(
+                                              fontSize: 24,
+                                              fontWeight: FontWeight.bold,
+                                              color: Color(0xFFee1c1d)),
+                                        ),
+                                        SizedBox(height: 10),
+                                        Row(
+                                          children: [
+                                            Icon(
+                                              Icons.location_on,
+                                              color: Color(0xFFee1c1d),
+                                            ),
+                                            SizedBox(width: 5),
+                                            Text(
+                                              '${distance.toStringAsFixed(2)} km',
+                                              style: TextStyle(
+                                                color: Color(0xFFee1c1d),
+                                                fontSize: 15,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        SizedBox(height: 7),
+                                        // ElevatedButton(
+                                        //   onPressed: () {
+                                        //     Navigator.of(context)
+                                        //         .push(MaterialPageRoute(
+                                        //       builder: (context) => BookAppointment(
+                                        //         userName: data[
+                                        //             'name'], // Pass the service center name
+                                        //         selectedServiceCenterName:
+                                        //             _nameController
+                                        //                 .text, // Pass the user's name
+                                        //         adminId:
+                                        //             'g64p7nddtoxBZDKEQq1V', // Provide the adminId here
+                                        //         branchId: data[
+                                        //             'branchId'], // Pass the branchId from Firestore
+                                        //       ),
+                                        //     ));
+                                        //   },
+                                        //   style: ElevatedButton.styleFrom(
+                                        //     primary: Color(0xFF7D0A0A),
+                                        //     shape: RoundedRectangleBorder(
+                                        //       borderRadius: BorderRadius.circular(20),
+                                        //     ),
+                                        //   ),
+                                        //   child: Padding(
+                                        //     padding: const EdgeInsets.symmetric(
+                                        //       horizontal: 8,
+                                        //       vertical: 2,
+                                        //     ),
+                                        //     child: Text(
+                                        //       'Book Appointment',
+                                        //       style: TextStyle(
+                                        //         color: Colors.white,
+                                        //         fontSize: 12,
+                                        //         fontWeight: FontWeight.bold,
+                                        //       ),
+                                        //     ),
+                                        //   ),
+                                        // ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
                           ),
-                        ),
-                      ),
-                    ),
-                    Positioned(
-                      top: -5,
-                      left: MediaQuery.of(context).size.width -
-                          MediaQuery.of(context).size.width / 2.5,
-                      child: imagee(data['name'], index),
-                    ),
-                  ]);
+                          Positioned(
+                            top: 15,
+                            left: MediaQuery.of(context).size.width -
+                                MediaQuery.of(context).size.width / 3,
+                            child: Icon(
+                              selectedColour(data['name']),
+                              size: 100,
+                              color: Color(0xFFee1c1d),
+                            ),
+                          ),
+                        ]);
                 },
               );
             },
