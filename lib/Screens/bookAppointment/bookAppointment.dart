@@ -4,6 +4,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'dart:math';
 import '../Home/main_home_screen.dart';
 
+bool conBook = false;
+
 Future<void> _dialogBuilder(BuildContext context) {
   return showDialog<void>(
     context: context,
@@ -43,15 +45,55 @@ Future<void> _dialogBuilder(BuildContext context) {
   );
 }
 
+Future<void> _confirmBooking(BuildContext context) {
+  return showDialog<void>(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: const Text("Are you sure the details are correct"),
+        actions: <Widget>[
+          TextButton(
+            style: TextButton.styleFrom(
+              textStyle: Theme.of(context).textTheme.labelLarge,
+            ),
+            child: const Text(
+              'Yes',
+              style: TextStyle(color: Colors.grey, fontSize: 20),
+            ),
+            onPressed: () {
+              conBook = true;
+              Navigator.of(context).pop();
+            },
+          ),
+          TextButton(
+            style: TextButton.styleFrom(
+              textStyle: Theme.of(context).textTheme.labelLarge,
+            ),
+            child: const Text('No',
+                style: TextStyle(
+                    color: Colors.redAccent,
+                    fontSize: 20,
+                    fontWeight: FontWeight.w600)),
+            onPressed: () {
+              conBook = false;
+              Navigator.of(context).pop();
+            },
+          ),
+        ],
+      );
+    },
+  );
+}
+
 class BookAppointment extends StatefulWidget {
-  final String userName;
+  final String serviceStationName;
   final String selectedServiceCenterName;
   final String adminId; // Add adminId as a parameter
   final String branchId; // Add branchId as a parameter
 
   const BookAppointment({
     Key? key,
-    required this.userName,
+    required this.serviceStationName,
     required this.selectedServiceCenterName,
     required this.adminId, // Require adminId
     required this.branchId, // Require branchId
@@ -62,6 +104,7 @@ class BookAppointment extends StatefulWidget {
 }
 
 class _BookAppointmentState extends State<BookAppointment> {
+  String appointmentStatus = '';
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _remarksController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
@@ -70,8 +113,6 @@ class _BookAppointmentState extends State<BookAppointment> {
   DateTime _selectedDate = DateTime.now();
   TimeOfDay _selectedTime = TimeOfDay.now();
   Map<String, dynamic>? selectedVehicle;
-
-  double _totalCost = 0.0;
 
   @override
   void initState() {
@@ -116,11 +157,11 @@ class _BookAppointmentState extends State<BookAppointment> {
           .get();
 
       // Retrieve the 'name' field from Firestore
-      String userName = snapshot.get('name');
+      String serviceStationName = snapshot.get('name');
       String phoneNumber = snapshot.get('phone');
 
       // Set the name in the text field
-      _nameController.text = userName;
+      _nameController.text = serviceStationName;
       _phoneController.text = phoneNumber;
     }
   }
@@ -150,9 +191,17 @@ class _BookAppointmentState extends State<BookAppointment> {
   }
 
   void _bookAppointment() async {
+    if (selectedVehicle == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Please select a vehicle.'),
+        ),
+      );
+      return; // Return early if a vehicle is not selected
+    }
+
     // Check if the user has selected a date and time
     if (_selectedDate == null || _selectedTime == null) {
-      // Show a message to the user indicating that both date and time need to be selected
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Please select both date and time.'),
@@ -211,72 +260,74 @@ class _BookAppointmentState extends State<BookAppointment> {
         );
       } else {
         // Perform booking process here
-        // You can access the selected date, time, name, and remarks
         String name = _nameController.text;
         String phone = _phoneController.text;
         String remarks = _remarksController.text;
 
         Timestamp timestamp = Timestamp.fromDate(selectedDateTime);
 
-        // Create a new appointment document ID
         String appointmentId = FirebaseFirestore.instance
             .collection('admins')
-            .doc(widget.adminId) // Use widget.adminId
+            .doc(widget.adminId)
             .collection('branch')
-            .doc(widget.branchId) // Use widget.branchId
+            .doc(widget.branchId)
             .collection('appointments')
             .doc()
             .id;
 
-        // Fetch customer data using the customer ID
         DocumentSnapshot<Map<String, dynamic>> customerSnapshot =
             await FirebaseFirestore.instance
                 .collection('customer')
-                .doc(FirebaseAuth.instance.currentUser!
-                    .uid) // Fetch data for the current user
+                .doc(FirebaseAuth.instance.currentUser!.uid)
                 .get();
 
-        // Create a map for customer information
         Map<String, dynamic> customerInfo = {
           'name': customerSnapshot.get('name'),
           'phone': customerSnapshot.get('phone'),
           'email': customerSnapshot.get('email'),
           'customerId': customerSnapshot.get('customerId'),
           'created_on': customerSnapshot.get('created_on'),
-          // Add more customer information if needed
         };
-
-        QuerySnapshot<Map<String, dynamic>> vehicleSnapshot =
-            await FirebaseFirestore.instance
-                .collection('customer')
-                .doc(FirebaseAuth.instance.currentUser!.uid)
-                .collection('vehicles')
-                .get();
 
         Map<String, dynamic> vehicleInfo = {
-          'brand': vehicleSnapshot.docs.first.get('brand'),
-          'fuelType': vehicleSnapshot.docs.first.get('fuelType'),
-          'kmDriven': vehicleSnapshot.docs.first.get('kmDriven'),
-          'model': vehicleSnapshot.docs.first.get('model'),
-          'transmissionType':
-              vehicleSnapshot.docs.first.get('transmissionType'),
-          'variant': vehicleSnapshot.docs.first.get('variant'),
-          'vehicleId': vehicleSnapshot.docs.first.get('vehicleId'),
-          'year': vehicleSnapshot.docs.first.get('year'),
-          // Add more customer information if needed
+          'brand': selectedVehicle!['brand'], // Use selectedVehicle
+          'fuelType': selectedVehicle!['fuelType'],
+          'kmDriven': selectedVehicle!['kmDriven'],
+          'model': selectedVehicle!['model'],
+          'transmissionType': selectedVehicle!['transmissionType'],
+          'variant': selectedVehicle!['variant'],
+          'vehicleId': selectedVehicle!['vehicleId'],
+          'year': selectedVehicle!['year'],
         };
 
-        // Create data to be stored in Firestore
         Map<String, dynamic> appointmentData = {
           'name': name,
           'phone': phone,
           'remarks': remarks,
           'timestamp': timestamp,
           'customerInfo': customerInfo,
-          'vehicleInfo': vehicleInfo, // Add customer information map
+          'vehicleInfo': vehicleInfo,
+          'appointmentStatus': appointmentStatus,
+          'appointmentId': appointmentId,
         };
 
-        // Store the appointment data in Firestore
+        // Map<String, dynamic> myAppointmentData = {
+        //   'remarks': remarks,
+        //   'timestamp': timestamp,
+        //   'appointmentStatus': appointmentStatus,
+        //   'vehicleInfo': vehicleInfo,
+        //   'appointmentId': appointmentId,
+        // };
+        Map<String, dynamic> myAppointmentData = {
+          'remarks': remarks,
+          'timestamp': timestamp,
+          'appointmentStatus': appointmentStatus,
+          'vehicleInfo': vehicleInfo,
+          'appointmentId': appointmentId,
+          'serviceCenterName':
+              widget.serviceStationName, // Include the service center name
+        };
+
         await FirebaseFirestore.instance
             .collection('admins')
             .doc(widget.adminId)
@@ -286,22 +337,31 @@ class _BookAppointmentState extends State<BookAppointment> {
             .doc(appointmentId)
             .set(appointmentData);
 
-        // Print a success message
+        await FirebaseFirestore.instance
+            .collection('customer')
+            .doc(FirebaseAuth.instance.currentUser!.uid)
+            .collection('myAppointments')
+            .doc(appointmentId)
+            .set(myAppointmentData);
+
         print('Appointment booked successfully!');
         showDialog<void>(
-            context: context,
-            builder: (BuildContext context) {
-              return AlertDialog(
-                title: const Text("Booking Confirmed"),
-              );
-            });
-        Future.delayed(Duration(seconds: 4), () {
-          Navigator.pushReplacementNamed(context, '/nav');
-        });
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: const Text("Booking Confirmed"),
+            );
+          },
+        );
+        Future.delayed(
+          Duration(seconds: 2),
+          () {
+            Navigator.of(context).pushNamedAndRemoveUntil(
+                '/nav', (Route<dynamic> route) => false);
+          },
+        );
       }
-      // Remove the navigation logic from here
     } catch (e) {
-      // Show an error message to the user if the booking process fails
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Error booking appointment: $e'),
@@ -339,7 +399,7 @@ class _BookAppointmentState extends State<BookAppointment> {
             Stack(
               children: <Widget>[
                 Container(
-                  height: 250,
+                  height: 280,
                   width: MediaQuery.of(context).size.width,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.only(
@@ -371,9 +431,16 @@ class _BookAppointmentState extends State<BookAppointment> {
                           IconButton(
                               icon: Icon(Icons.arrow_back,
                                   color: Color.fromARGB(255, 185, 26, 26)),
-                              onPressed: () => _dialogBuilder(context)),
+                              onPressed: () {
+                                if (conBook) {
+                                  Navigator.of(context).pushNamedAndRemoveUntil(
+                                      '/nav', (Route<dynamic> route) => false);
+                                } else {
+                                  _dialogBuilder(context);
+                                }
+                              }),
                           Text(
-                            widget.userName,
+                            widget.serviceStationName,
                             style: TextStyle(
                                 fontSize: 20, fontWeight: FontWeight.w500),
                           ),
@@ -385,13 +452,17 @@ class _BookAppointmentState extends State<BookAppointment> {
               ],
             ),
             SizedBox(
-              height: 40,
+              height: 20,
             ),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20.0),
               child: DropdownButtonFormField(
                 value: selectedVehicle,
                 items: _buildDropdownMenuItems(),
+                style: TextStyle(
+                    fontSize: 20,
+                    color: Colors.black,
+                    fontWeight: FontWeight.w400),
                 onChanged: (value) {
                   setState(() {
                     selectedVehicle = value as Map<String, dynamic>;
@@ -399,148 +470,307 @@ class _BookAppointmentState extends State<BookAppointment> {
                 },
                 decoration: InputDecoration(
                   hintText: "Select Vehicle",
-                  prefixIcon: Icon(
-                    Icons.directions_car,
-                    color: Colors.redAccent,
+                  prefixIcon: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        Icons.directions_car,
+                        color: Colors.redAccent,
+                        size: 30,
+                      ),
+                      SizedBox(
+                          width: 20), // Adjust the width as per your preference
+                    ],
                   ),
                   enabledBorder: UnderlineInputBorder(
-                    borderSide: BorderSide(color: Colors.redAccent),
+                    borderSide: BorderSide(color: Colors.white),
+                  ),
+                  focusedBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(color: Colors.white),
                   ),
                 ),
               ),
             ),
+            SizedBox(height: 10),
+            Divider(
+              height: 5,
+              color: const Color.fromARGB(255, 88, 87, 87),
+            ),
 
-            SizedBox(height: 30),
+            SizedBox(height: 10),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20.0),
               child: TextFormField(
                 controller: _nameController,
                 keyboardType: TextInputType.text,
+                style: TextStyle(
+                    fontSize: 20,
+                    color: Colors.black,
+                    fontWeight: FontWeight.w400),
                 decoration: InputDecoration(
                   hintText: "Name",
-                  prefixIcon: Icon(
-                    Icons.person,
-                    color: Colors.redAccent,
+                  prefixIcon: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        Icons.person,
+                        color: Colors.redAccent,
+                        size: 30,
+                      ),
+                      SizedBox(
+                          width: 20), // Adjust the width as per your preference
+                    ],
                   ),
                   enabledBorder: UnderlineInputBorder(
-                    borderSide: BorderSide(color: Colors.redAccent),
+                    borderSide: BorderSide(color: Colors.white),
+                  ),
+                  focusedBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(color: Colors.white),
                   ),
                 ),
               ),
             ),
-            SizedBox(height: 20),
+            SizedBox(height: 10),
+            Divider(
+              height: 5,
+              color: const Color.fromARGB(255, 88, 87, 87),
+            ),
+            SizedBox(height: 10),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20.0),
               child: TextFormField(
                 controller: _phoneController,
                 keyboardType: TextInputType.text,
+                style: TextStyle(
+                    fontSize: 20,
+                    color: Colors.black,
+                    fontWeight: FontWeight.w400),
                 decoration: InputDecoration(
                   hintText: "Phone Number",
-                  prefixIcon: Icon(
-                    Icons.phone,
-                    color: Colors.redAccent,
+                  prefixIcon: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        Icons.phone,
+                        color: Colors.redAccent,
+                        size: 30,
+                      ),
+                      SizedBox(
+                          width: 20), // Adjust the width as per your preference
+                    ],
                   ),
                   enabledBorder: UnderlineInputBorder(
-                    borderSide: BorderSide(color: Colors.redAccent),
+                    borderSide: BorderSide(color: Colors.white),
+                  ),
+                  focusedBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(color: Colors.white),
                   ),
                 ),
               ),
             ),
-            //
-            // Other form fields and widgets...
-            SizedBox(height: 20),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: GestureDetector(
-                      onTap: () => _selectDate(context),
-                      child: TextFormField(
-                        decoration: InputDecoration(
-                          hintText: 'Date',
-                          prefixIcon: Icon(
+            SizedBox(height: 10),
+            Divider(
+              height: 5,
+              color: const Color.fromARGB(255, 88, 87, 87),
+            ),
+            SizedBox(height: 10),
+            Stack(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  child: TextFormField(
+                    style: TextStyle(
+                        fontSize: 20,
+                        color: Colors.black,
+                        fontWeight: FontWeight.w400),
+                    decoration: InputDecoration(
+                      hintText: 'Date',
+                      prefixIcon: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(
                             Icons.calendar_today,
                             color: Colors.redAccent,
+                            size: 30,
                           ),
-                          enabledBorder: UnderlineInputBorder(
-                            borderSide: BorderSide(color: Colors.redAccent),
-                          ),
-                        ),
-                        controller: TextEditingController(
-                            text:
-                                '${_selectedDate.year}-${_selectedDate.month}-${_selectedDate.day}'),
-                        enabled: false,
+                          SizedBox(
+                              width:
+                                  20), // Adjust the width as per your preference
+                        ],
+                      ),
+                      enabledBorder: UnderlineInputBorder(
+                        borderSide: BorderSide(color: Colors.white),
+                      ),
+                      focusedBorder: UnderlineInputBorder(
+                        borderSide: BorderSide(color: Colors.white),
                       ),
                     ),
+                    controller: TextEditingController(
+                        text:
+                            '${_selectedDate.year}-${_selectedDate.month}-${_selectedDate.day}'),
+                    enabled: false,
                   ),
-                  SizedBox(width: 40),
-                  Expanded(
-                    child: GestureDetector(
-                      onTap: () => _selectTime(context),
-                      child: TextFormField(
-                        decoration: InputDecoration(
-                          hintText: 'Time',
-                          prefixIcon: Icon(
+                ),
+                Positioned(
+                  top: 3,
+                  left: MediaQuery.of(context).size.width / 1.45,
+                  child: ElevatedButton(
+                      onPressed: () => _selectDate(context),
+                      style: ElevatedButton.styleFrom(
+                          padding: const EdgeInsets.all(0),
+                          foregroundColor: Colors.white,
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(40))),
+                      child: Ink(
+                          decoration: BoxDecoration(
+                              color: Colors.redAccent,
+                              borderRadius: BorderRadius.circular(40)),
+                          child: Container(
+                              width: 110,
+                              height: 40,
+                              alignment: Alignment.center,
+                              child: const Text(
+                                'Change Date',
+                                style: TextStyle(fontSize: 14),
+                              )))),
+                ),
+              ],
+            ),
+            SizedBox(height: 10),
+            Divider(
+              height: 5,
+              color: const Color.fromARGB(255, 88, 87, 87),
+            ),
+            SizedBox(height: 10),
+            Stack(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  child: TextFormField(
+                    style: TextStyle(
+                        fontSize: 20,
+                        color: Colors.black,
+                        fontWeight: FontWeight.w400),
+                    decoration: InputDecoration(
+                      hintText: 'Time',
+                      prefixIcon: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(
                             Icons.access_time,
                             color: Colors.redAccent,
+                            size: 30,
                           ),
-                          enabledBorder: UnderlineInputBorder(
-                            borderSide: BorderSide(color: Colors.redAccent),
-                          ),
-                        ),
-                        controller: TextEditingController(
-                            text:
-                                '${_selectedTime.hour}:${_selectedTime.minute}'),
-                        enabled: false,
+                          SizedBox(
+                              width:
+                                  20), // Adjust the width as per your preference
+                        ],
+                      ),
+                      enabledBorder: UnderlineInputBorder(
+                        borderSide: BorderSide(color: Colors.white),
+                      ),
+                      focusedBorder: UnderlineInputBorder(
+                        borderSide: BorderSide(color: Colors.white),
                       ),
                     ),
+                    controller: TextEditingController(
+                        text: '${_selectedTime.hour}:${_selectedTime.minute}'),
+                    enabled: false,
                   ),
-                ],
-              ),
+                ),
+                Positioned(
+                  top: 3,
+                  left: MediaQuery.of(context).size.width / 1.45,
+                  child: ElevatedButton(
+                      onPressed: () => _selectTime(context),
+                      style: ElevatedButton.styleFrom(
+                          padding: const EdgeInsets.all(0),
+                          foregroundColor: Colors.white,
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(40))),
+                      child: Ink(
+                          decoration: BoxDecoration(
+                              color: Colors.redAccent,
+                              borderRadius: BorderRadius.circular(40)),
+                          child: Container(
+                              width: 110,
+                              height: 40,
+                              alignment: Alignment.center,
+                              child: const Text(
+                                'Change Time',
+                                style: TextStyle(fontSize: 14),
+                              )))),
+                ),
+              ],
             ),
-            SizedBox(height: 20),
+            SizedBox(height: 10),
+            Divider(
+              height: 5,
+              color: const Color.fromARGB(255, 88, 87, 87),
+            ),
+            SizedBox(height: 10),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20.0),
               child: TextFormField(
                 controller: _remarksController,
                 keyboardType: TextInputType.text,
+                style: TextStyle(
+                    fontSize: 20,
+                    color: Colors.black,
+                    fontWeight: FontWeight.w400),
                 decoration: InputDecoration(
                   hintText: "Remarks",
-                  prefixIcon: Icon(
-                    Icons.note,
-                    color: Colors.redAccent,
+                  prefixIcon: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        Icons.note,
+                        color: Colors.redAccent,
+                        size: 30,
+                      ),
+                      SizedBox(
+                          width: 20), // Adjust the width as per your preference
+                    ],
                   ),
                   enabledBorder: UnderlineInputBorder(
-                    borderSide: BorderSide(color: Colors.redAccent),
+                    borderSide: BorderSide(color: Colors.white),
+                  ),
+                  focusedBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(color: Colors.white),
                   ),
                 ),
               ),
             ),
-            SizedBox(height: 30),
-            Center(
-              child: ElevatedButton(
-                  onPressed: () => _bookAppointment(),
-                  style: ElevatedButton.styleFrom(
-                      padding: const EdgeInsets.all(0),
-                      foregroundColor: Colors.white,
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(40))),
-                  child: Ink(
-                      decoration: BoxDecoration(
-                          gradient: const LinearGradient(colors: [
-                            Color.fromARGB(255, 236, 131, 131),
-                            Color.fromARGB(255, 228, 35, 35)
-                          ]),
-                          borderRadius: BorderRadius.circular(40)),
-                      child: Container(
-                          width: 140,
-                          height: 50,
-                          alignment: Alignment.center,
-                          child: const Text(
-                            'Book',
-                            style: TextStyle(fontSize: 17),
-                          )))),
+            SizedBox(height: 10),
+            Divider(
+              height: 5,
+              color: const Color.fromARGB(255, 88, 87, 87),
+            ),
+            SizedBox(height: 42),
+            GestureDetector(
+              onTap: () async {
+                print("hi");
+                await _confirmBooking(context);
+                if (conBook) {
+                  _bookAppointment();
+                }
+              },
+              child: Container(
+                width: MediaQuery.of(context).size.width,
+                height: MediaQuery.of(context).size.height / 12.9,
+                decoration: BoxDecoration(
+                  color: Colors.redAccent,
+                ),
+                child: Center(
+                  child: Text(
+                    "Confirm Booking",
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 28,
+                        fontWeight: FontWeight.w700),
+                  ),
+                ),
+              ),
             ),
           ],
         ),

@@ -75,7 +75,7 @@ class _MyAppointmentsState extends State<MyAppointments> {
 
               String formattedDate = DateFormat('yyyy-MM-dd').format(dateTime);
               String dayOfWeek = DateFormat('EEEE').format(dateTime);
-              String datee = DateFormat.MMMMEEEEd().format(dateTime);
+              String datee = DateFormat.MMMEd().format(dateTime);
 
               String date = formattedDate.split('-')[2];
               String currentDate =
@@ -86,7 +86,7 @@ class _MyAppointmentsState extends State<MyAppointments> {
               final diffDate = dateTime.difference(DateTime.now()).inDays;
 
               return Container(
-                height: MediaQuery.of(context).size.height / 6.5,
+                height: MediaQuery.of(context).size.height / 8,
                 width: MediaQuery.of(context).size.width,
                 padding: EdgeInsets.only(bottom: 15),
                 margin: EdgeInsets.only(bottom: 15),
@@ -94,26 +94,47 @@ class _MyAppointmentsState extends State<MyAppointments> {
                     border: Border(bottom: BorderSide(color: Colors.black))),
                 child: Row(
                   children: [
-                    Padding(
-                      padding: const EdgeInsets.only(right: 20),
+                    Container(
+                      alignment: Alignment.center,
+
+                      width: 80,
+                      height: 95, // Fix the height of the button tile
+                      decoration: BoxDecoration(
+                        border: Border.all(color: Colors.transparent),
+                        borderRadius: BorderRadius.circular(10.0),
+                        boxShadow: [
+                          BoxShadow(
+                            color: const Color.fromARGB(255, 103, 101, 101)
+                                .withOpacity(0.2),
+                            spreadRadius: 4,
+                            blurRadius: 9,
+                            offset: Offset(0, 2),
+                          ),
+                        ],
+                        color: Colors.white,
+                      ),
+                      padding: EdgeInsets.all(6.0),
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Text(
                             "${diffDate.toString()}",
                             style: TextStyle(
-                                fontSize: 32,
+                                fontSize: 38,
                                 color: Color(0xFFee1c1d),
                                 fontWeight: FontWeight.w800),
                           ),
                           Text(
                             "days left",
                             style: TextStyle(
-                                fontSize: 12,
-                                color: Color.fromARGB(255, 143, 141, 141)),
+                                fontSize: 14,
+                                color: Color.fromARGB(255, 60, 57, 57)),
                           ),
                         ],
                       ),
+                    ),
+                    SizedBox(
+                      width: 17,
                     ),
                     Expanded(
                       child: Column(
@@ -128,12 +149,19 @@ class _MyAppointmentsState extends State<MyAppointments> {
                                     MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text(
-                                    "Vehicle:",
+                                    "${displayText}",
                                     style: TextStyle(
-                                        fontSize: 12,
-                                        color:
-                                            Color.fromARGB(255, 143, 141, 141)),
+                                        fontSize: 22,
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.w800),
                                   ),
+                                  // Text(
+                                  //   "Vehicle:",
+                                  //   style: TextStyle(
+                                  //       fontSize: 12,
+                                  //       color:
+                                  //           Color.fromARGB(255, 143, 141, 141)),
+                                  // ),
                                   Text(
                                     "${datee}",
                                     style: TextStyle(
@@ -141,13 +169,6 @@ class _MyAppointmentsState extends State<MyAppointments> {
                                         fontWeight: FontWeight.w800),
                                   )
                                 ],
-                              ),
-                              Text(
-                                "${displayText}",
-                                style: TextStyle(
-                                    fontSize: 22,
-                                    color: Color(0xFFee1c1d),
-                                    fontWeight: FontWeight.w800),
                               ),
                             ],
                           ),
@@ -160,8 +181,7 @@ class _MyAppointmentsState extends State<MyAppointments> {
                                     "Status: ",
                                     style: TextStyle(
                                         fontSize: 12,
-                                        color:
-                                            Color.fromARGB(255, 143, 141, 141)),
+                                        color: Color.fromARGB(255, 60, 57, 57)),
                                   ),
                                   Text(
                                     "${appointmentStatus}",
@@ -178,8 +198,7 @@ class _MyAppointmentsState extends State<MyAppointments> {
                                     "Time - ",
                                     style: TextStyle(
                                         fontSize: 12,
-                                        color:
-                                            Color.fromARGB(255, 143, 141, 141)),
+                                        color: Color.fromARGB(255, 60, 57, 57)),
                                   ),
                                   Text(
                                     "${formattedTime}",

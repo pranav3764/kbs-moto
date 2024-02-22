@@ -100,8 +100,7 @@ class _ButtonTileState extends State<ButtonTile> {
                 widget.imageUrl,
                 height: 30,
                 width: 30,
-                color:
-                    isHover ? Color.fromARGB(255, 255, 255, 255) : Colors.black,
+                color: isHover ? Colors.white : Colors.black,
               ),
             ),
             SizedBox(
@@ -113,11 +112,9 @@ class _ButtonTileState extends State<ButtonTile> {
                 widget.title,
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                  color: isHover
-                      ? Color.fromARGB(255, 255, 255, 255)
-                      : Colors.black,
-                  fontSize: 12.0,
-                  fontWeight: FontWeight.w500,
+                  color: isHover ? Colors.white : Colors.black,
+                  fontSize: 13.0,
+                  fontWeight: FontWeight.w700,
                 ),
               ),
             ),

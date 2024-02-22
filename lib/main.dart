@@ -44,6 +44,7 @@ class MyApp extends StatelessWidget {
           backgroundColor: Colors.grey.shade900,
           useMaterial3: true,
         ),
+        
         initialRoute: '/',
         routes: {
           "/": (context) => SplashPagee(),

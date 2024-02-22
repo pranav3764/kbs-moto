@@ -100,6 +100,7 @@ flutter:
     - assets/logo/kbs_motohub_red.png
     - assets/images/splash_bg_demo.jpg
     - assets/images/onboard_images/
+    - assets/images.jpg
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

@@ -32,10 +32,7 @@ class _FieldState extends State<Field> {
         Text(
           widget.name,
           style: TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 18,
-            color: Color.fromARGB(255, 108, 79, 56),
-          ),
+              fontWeight: FontWeight.bold, fontSize: 18, color: Colors.black),
         ),
         SizedBox(
           width: 20,
@@ -45,7 +42,7 @@ class _FieldState extends State<Field> {
             controller: widget.controller,
             cursorColor: Color.fromARGB(255, 108, 79, 56),
             style: TextStyle(
-              color: Color.fromARGB(255, 108, 79, 56),
+              color: Colors.black,
             ),
             decoration: InputDecoration(
               hintText: widget.hintText,
@@ -62,7 +59,7 @@ class _FieldState extends State<Field> {
                 borderRadius: BorderRadius.all(Radius.circular(40)),
                 borderSide: BorderSide(
                   width: 3,
-                  color: Color.fromARGB(255, 108, 79, 56),
+                  color: Colors.black,
                 ),
               ),
             ),
